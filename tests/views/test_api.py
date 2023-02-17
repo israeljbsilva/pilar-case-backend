@@ -8,6 +8,8 @@ import requests
 
 from settings import HOST, PORT
 
+URL_BASE = f'http://{HOST}:{PORT}'
+
 
 @pytest.fixture(autouse=True, scope="session")
 def start_server():
@@ -27,21 +29,58 @@ def start_server():
 
 
 def test_vowel_count_ok():
-    url = f'http://{HOST}:{PORT}/vowel_count'
+    url = f'{URL_BASE}/vowel_count'
     response = requests.post(url, json={'words': ['batman', 'robin', 'coringa']})
     assert response.status_code == HTTPStatus.OK
     assert response.text == '{"batman": 2, "robin": 2, "coringa": 3}'
 
 
+def test_vowel_count_fail_without_field_required_payload():
+    url = f'{URL_BASE}/vowel_count'
+    response = requests.post(url, json={'w': ['batman', 'robin', 'coringa']})
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.text == '{"error_message": "1 validation error for InputVowelCountModel\\' \
+                            'nwords\\n  field required (type=value_error.missing)"}'
+
+
+def test_vowel_count_fail_without_list_in_words_payload():
+    url = f'{URL_BASE}/vowel_count'
+    response = requests.post(url, json={'words': 1})
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.text == '{"error_message": "1 validation error for InputVowelCountModel\\' \
+                            'nwords\\n  value is not a valid list (type=type_error.list)"}'
+
+
 def test_sort_asc_ok():
-    url = f'http://{HOST}:{PORT}/sort'
+    url = f'{URL_BASE}/sort'
     response = requests.post(url, json={'words': ['batman', 'robin', 'coringa'], 'order': 'asc'})
     assert response.status_code == HTTPStatus.OK
     assert response.text == '["batman", "coringa", "robin"]'
 
 
 def test_sort_desc_ok():
-    url = f'http://{HOST}:{PORT}/sort'
+    url = f'{URL_BASE}/sort'
     response = requests.post(url, json={'words': ['batman', 'robin', 'coringa'], 'order': 'desc'})
     assert response.status_code == HTTPStatus.OK
     assert response.text == '["robin", "coringa", "batman"]'
+
+
+def test_sort_fail_without_fields_required_payload():
+    url = f'{URL_BASE}/sort'
+    response = requests.post(url, json={'w': ['batman', 'robin', 'coringa'], 'o': 'asc'})
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.text == '{"error_message": "2 validation errors for InputSortModel\\nwords\\' \
+                            'n  field required (type=value_error.missing)\\norder\\' \
+                            'n  field required (type=value_error.missing)"}'
+
+
+def test_sort_fail_invalid_values_payload():
+    import json
+
+    url = f'{URL_BASE}/sort'
+    response = requests.post(url, json={'words': 1, 'order': 'nenhuma'})
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert json.loads(response.content) == {
+        'error_message': "2 validation errors for InputSortModel\nwords\n  value is not a valid list "
+                         "(type=type_error.list)\norder\n  unexpected value; permitted: 'asc', 'desc' "
+                         "(type=value_error.const; given=nenhuma; permitted=('asc', 'desc'))"}
