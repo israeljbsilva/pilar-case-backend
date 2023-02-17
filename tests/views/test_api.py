@@ -84,3 +84,17 @@ def test_sort_fail_invalid_values_payload():
         'error_message': "2 validation errors for InputSortModel\nwords\n  value is not a valid list "
                          "(type=type_error.list)\norder\n  unexpected value; permitted: 'asc', 'desc' "
                          "(type=value_error.const; given=nenhuma; permitted=('asc', 'desc'))"}
+
+
+def test_fail_non_existent_route():
+    url = f'{URL_BASE}/test'
+    response = requests.post(url, json={})
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.text == '{"error_message": "non-existent route /test"}'
+
+
+def test_fail_invalid_content_type():
+    url = f'{URL_BASE}/sort'
+    response = requests.post(url, json={}, headers={'Content-Type': 'application/x-www-form-urlencoded'})
+    assert response.status_code == HTTPStatus.UNSUPPORTED_MEDIA_TYPE
+    assert response.text == '{"error_message": "Content-Type is not application/json"}'
