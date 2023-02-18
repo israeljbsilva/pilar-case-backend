@@ -2,4 +2,4 @@ import os
 
 
 HOST = 'localhost'
-PORT = os.environ.get('PORT', 5005)
+PORT = int(os.environ.get('PORT', 5005))
