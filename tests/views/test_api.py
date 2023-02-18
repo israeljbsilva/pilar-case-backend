@@ -5,10 +5,9 @@ from http import HTTPStatus
 
 import pytest
 import requests
+from settings import PORT
 
-from settings import HOST, PORT
-
-URL_BASE = f'http://{HOST}:{PORT}'
+URL_BASE = f'http://localhost:{PORT}'
 
 
 @pytest.fixture(autouse=True, scope="session")
