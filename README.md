@@ -1,7 +1,30 @@
 # pilar-case-backend
-Usando Python, escreva o código de uma API com as seguintes rotas
 
+## Instalar dependências
+- pip install -r requirements.txt
 
+## Rodar aplicação localmente
+- python main.py
+
+## Acessar endpoints localmente
+### URL BASE: 
+- http://localhost:5005
+### Conta vogais em palavras: 
+- http://localhost:5005/vowel_count
+### Ordena palavras em um array: 
+- http://localhost:5005/sort
+
+## Rodar testes
+- pytest
+
+## Acessar aplicação deployada no HEROKU:
+### URL BASE: 
+- https://pilar-case-backend.herokuapp.com/
+### Conta vogais em palavras: 
+- https://pilar-case-backend.herokuapp.com/vowel_count
+### Ordena palavras em um array: 
+- https://pilar-case-backend.herokuapp.com/sort
+# Descrição do Teste
 Usando Python, escreva o código de uma API com as seguintes rotas:
 
 [POST] /vowel_count -- conta vogais em palavras
