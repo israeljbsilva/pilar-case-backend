@@ -1,2 +1,5 @@
+import os
+
+
 HOST = 'localhost'
-PORT = 5005
+PORT = os.environ.get('PORT', 5005)
